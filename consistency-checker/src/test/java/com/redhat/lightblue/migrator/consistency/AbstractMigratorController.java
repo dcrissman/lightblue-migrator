@@ -25,7 +25,7 @@ public abstract class AbstractMigratorController extends AbstractCRUDControllerW
     protected LightblueResponse loadData(String entityName, String entityVersion, String resourcePath) throws IOException {
         SimpleDataRequest request = new SimpleDataRequest(entityName, entityVersion, Operation.INSERT, loadResource(resourcePath, false));
         LightblueResponse response = getLightblueClient().data(request);
-        assertFalse(response.hasError());
+        assertFalse(response.getText(), response.hasError());
 
         return response;
     }
