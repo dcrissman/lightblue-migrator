@@ -6,7 +6,8 @@ import java.io.IOException;
 
 import org.junit.BeforeClass;
 
-import com.redhat.lightblue.client.request.data.DataInsertRequest;
+import com.redhat.lightblue.client.request.AbstractLightblueDataRequest.Operation;
+import com.redhat.lightblue.client.request.data.SimpleDataRequest;
 import com.redhat.lightblue.client.response.LightblueResponse;
 import com.redhat.lightblue.test.utils.AbstractCRUDControllerWithRest;
 
@@ -22,8 +23,7 @@ public abstract class AbstractMigratorController extends AbstractCRUDControllerW
     }
 
     protected LightblueResponse loadData(String entityName, String entityVersion, String resourcePath) throws IOException {
-        DataInsertRequest request = new DataInsertRequest(entityName, entityVersion);
-        request.setBody(loadResource(resourcePath, false));
+        SimpleDataRequest request = new SimpleDataRequest(entityName, entityVersion, Operation.INSERT, loadResource(resourcePath, false));
         LightblueResponse response = getLightblueClient().data(request);
         assertFalse(response.hasError());
 
