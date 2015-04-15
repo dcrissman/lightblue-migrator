@@ -1,5 +1,6 @@
 package com.redhat.lightblue.migrator.consistency;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,6 @@ import com.redhat.lightblue.client.LightblueClient;
 import com.redhat.lightblue.client.http.LightblueHttpClient;
 import com.redhat.lightblue.client.request.LightblueRequest;
 import com.redhat.lightblue.client.response.LightblueResponse;
-import java.io.IOException;
 
 public class ConsistencyCheckerTest {
 
@@ -150,7 +150,7 @@ public class ConsistencyCheckerTest {
             }
 
             @Override
-            protected MigrationJob getNextAvailableJob() {
+            protected MigrationJob peekAheadToNextAvailableJob() {
                 MigrationJob job = new MigrationJob();
                 job.setWhenAvailableDate(DateUtils.addSeconds(new Date(), 5));
                 return job;
@@ -160,7 +160,7 @@ public class ConsistencyCheckerTest {
         checker.run();
 
     }
-    
+
     @Test
     public void isJobExecutable_NoExecutions() {
         MigrationJob job = new MigrationJob();
@@ -180,8 +180,8 @@ public class ConsistencyCheckerTest {
 
         Assert.assertTrue(ConsistencyChecker.isJobExecutable(job));
     }
-    
-        @Test
+
+    @Test
     public void isJobExecutable_RunningExecution() {
         MigrationJob job = new MigrationJob();
         MigrationJobExecution exec = new MigrationJobExecution();
@@ -195,9 +195,9 @@ public class ConsistencyCheckerTest {
     }
 
     @Test
-    public void getNextAvailableJob() {
+    public void peekAheadToNextAvailableJob() {
         final String pid = "jewzaam was here";
-        
+
         checker.setClient(new LightblueClient() {
             @Override
             public LightblueResponse metadata(LightblueRequest lr) {
@@ -214,12 +214,12 @@ public class ConsistencyCheckerTest {
                 MigrationJob[] jobs = new MigrationJob[1];
                 jobs[0] = new MigrationJob();
                 jobs[0].setPid(pid);
-                return (T)jobs;
+                return (T) jobs;
             }
         });
-        
-        MigrationJob job = checker.getNextAvailableJob();
-        
+
+        MigrationJob job = checker.peekAheadToNextAvailableJob();
+
         Assert.assertNotNull(job);
         Assert.assertEquals(pid, job.getPid());
     }
